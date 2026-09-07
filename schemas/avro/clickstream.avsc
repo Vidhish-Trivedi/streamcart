@@ -1,0 +1,14 @@
+{
+  "type": "record",
+  "name": "ClickstreamEvent",
+  "namespace": "streamcart.ecommerce",
+  "fields": [
+    {"name": "event_id", "type": "string"},
+    {"name": "trace_id", "type": "string"},
+    {"name": "session_id", "type": "string"},
+    {"name": "customer_id", "type": ["null", "string"], "default": null},
+    {"name": "page", "type": "string"},
+    {"name": "sku", "type": ["null", "string"], "default": null},
+    {"name": "event_ts", "type": "long", "doc": "epoch millis UTC"}
+  ]
+}

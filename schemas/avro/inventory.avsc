@@ -1,0 +1,14 @@
+{
+  "type": "record",
+  "name": "InventoryEvent",
+  "namespace": "streamcart.ecommerce",
+  "fields": [
+    {"name": "event_id", "type": "string"},
+    {"name": "trace_id", "type": "string"},
+    {"name": "sku", "type": "string"},
+    {"name": "warehouse_id", "type": "string"},
+    {"name": "quantity", "type": "int"},
+    {"name": "reason", "type": {"type": "enum", "name": "InventoryReason", "symbols": ["sale", "restock", "adjustment"]}},
+    {"name": "event_ts", "type": "long", "doc": "epoch millis UTC"}
+  ]
+}

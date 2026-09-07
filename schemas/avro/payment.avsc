@@ -1,0 +1,15 @@
+{
+  "type": "record",
+  "name": "PaymentEvent",
+  "namespace": "streamcart.ecommerce",
+  "fields": [
+    {"name": "event_id", "type": "string"},
+    {"name": "trace_id", "type": "string"},
+    {"name": "payment_id", "type": "string"},
+    {"name": "order_id", "type": "string"},
+    {"name": "status", "type": {"type": "enum", "name": "PaymentStatus", "symbols": ["authorized", "captured", "failed"]}},
+    {"name": "amount_cents", "type": "long"},
+    {"name": "currency", "type": "string", "default": "USD"},
+    {"name": "event_ts", "type": "long", "doc": "epoch millis UTC"}
+  ]
+}

@@ -1,0 +1,43 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "streamcart"
+version = "0.1.0"
+description = "Production-style e-commerce Kafka + Spark streaming ETL"
+readme = "README.md"
+requires-python = ">=3.11"
+dependencies = [
+  "confluent-kafka>=2.5.0",
+  "fastavro>=1.9.0",
+  "requests>=2.32.0",
+  "orjson>=3.10.0",
+  "psycopg2-binary>=2.9.9",
+  "minio>=7.2.0",
+  "python-dotenv>=1.0.1",
+]
+
+[project.optional-dependencies]
+dev = [
+  "pytest>=8.3.0",
+  "ruff>=0.6.0",
+]
+
+[project.scripts]
+streamcart-generate = "producers.generator.__main__:main"
+streamcart-register-schemas = "scripts.register_schemas:main"
+
+[tool.setuptools.packages.find]
+include = ["streamcart*", "producers*", "scripts*"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["."]
+
+[tool.ruff]
+line-length = 100
+target-version = "py311"
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "UP", "B"]

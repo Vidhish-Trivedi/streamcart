@@ -1,0 +1,18 @@
+{
+  "type": "record",
+  "name": "OrderEvent",
+  "namespace": "streamcart.ecommerce",
+  "fields": [
+    {"name": "event_id", "type": "string"},
+    {"name": "trace_id", "type": "string"},
+    {"name": "order_id", "type": "string"},
+    {"name": "customer_id", "type": "string"},
+    {"name": "status", "type": {"type": "enum", "name": "OrderStatus", "symbols": ["created", "paid", "cancelled", "fulfilled"]}},
+    {"name": "amount_cents", "type": "long"},
+    {"name": "currency", "type": "string", "default": "USD"},
+    {"name": "sku", "type": "string"},
+    {"name": "quantity", "type": "int"},
+    {"name": "event_ts", "type": "long", "doc": "epoch millis UTC"},
+    {"name": "coupon_code", "type": ["null", "string"], "default": null}
+  ]
+}
