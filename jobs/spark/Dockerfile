@@ -1,11 +1,13 @@
 FROM eclipse-temurin:17-jre-jammy
 
 RUN apt-get update && apt-get install -y --no-install-recommends \
-      python3 python3-pip python3-venv wget ca-certificates bash \
-    && ln -sf /usr/bin/python3 /usr/bin/python \
+      python3.12 python3.12-venv wget ca-certificates bash \
+    && ln -sf /usr/bin/python3.12 /usr/bin/python3 \
+    && ln -sf /usr/bin/python3.12 /usr/bin/python \
+    && python3.12 -m ensurepip --upgrade \
     && rm -rf /var/lib/apt/lists/*
 
-RUN pip3 install --no-cache-dir \
+RUN python3.12 -m pip install --no-cache-dir \
       pyspark==3.5.3 fastavro==1.9.7 psycopg2-binary==2.9.10 orjson==3.10.11 python-dotenv==1.0.1
 
 WORKDIR /opt/jars

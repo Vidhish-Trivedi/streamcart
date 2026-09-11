@@ -7,7 +7,9 @@ are dropped from the join (see streamcart.transforms.WATERMARK_LAG_MS).
 
 from __future__ import annotations
 
-from datetime import datetime, timezone
+from datetime import datetime
+
+from streamcart.compat import UTC
 
 from pyspark.sql import DataFrame
 from pyspark.sql.functions import col, current_timestamp, date_format, lit
@@ -120,7 +122,7 @@ def process_batch(batch_df: DataFrame, batch_id: int) -> None:
         return
 
     rows = batch_df.collect()
-    ingest_ts = datetime.now(timezone.utc)
+    ingest_ts = datetime.now(UTC)
     valid: list[dict] = []
     quarantine: list[dict] = []
 

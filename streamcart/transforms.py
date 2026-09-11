@@ -6,8 +6,10 @@ Spark jobs call these per micro-batch so interview talk tracks match the tests.
 from __future__ import annotations
 
 from collections.abc import Iterable
-from datetime import datetime, timezone
+from datetime import datetime
 from typing import Any
+
+from streamcart.compat import UTC
 
 VALID_ORDER_STATUSES = {"created", "paid", "cancelled", "fulfilled"}
 VALID_PAYMENT_STATUSES = {"authorized", "captured", "failed"}
@@ -168,4 +170,4 @@ def stockouts(inventory: Iterable[dict[str, Any]]) -> list[dict[str, Any]]:
 
 
 def millis_to_dt(ms: int) -> datetime:
-    return datetime.fromtimestamp(ms / 1000, tz=timezone.utc)
+    return datetime.fromtimestamp(ms / 1000, tz=UTC)
