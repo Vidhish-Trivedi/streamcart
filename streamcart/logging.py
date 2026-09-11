@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 import sys
-from datetime import UTC, datetime
+from datetime import datetime, timezone
 from typing import Any
 
 import orjson
@@ -9,7 +9,7 @@ import orjson
 
 def log(level: str, message: str, **fields: Any) -> None:
     record = {
-        "ts": datetime.now(UTC).isoformat(),
+        "ts": datetime.now(timezone.utc).isoformat(),
         "level": level,
         "message": message,
         **fields,

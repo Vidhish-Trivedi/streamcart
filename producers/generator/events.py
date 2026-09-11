@@ -3,7 +3,7 @@ from __future__ import annotations
 import os
 import random
 import uuid
-from datetime import UTC, datetime
+from datetime import datetime, timezone
 from typing import Any
 
 from streamcart.config import TOPICS
@@ -20,7 +20,7 @@ PAGES = ["/home", "/pdp", "/cart", "/checkout", "/search"]
 
 
 def _now_ms() -> int:
-    return int(datetime.now(UTC).timestamp() * 1000)
+    return int(datetime.now(timezone.utc).timestamp() * 1000)
 
 
 def _ids() -> tuple[str, str]:

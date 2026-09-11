@@ -1,35 +1,40 @@
 from __future__ import annotations
 
-from pathlib import Path
+import json
+from dataclasses import dataclass
 
+import requests
 from confluent_kafka import KafkaError, Producer
-from confluent_kafka.schema_registry import SchemaRegistryClient
-from confluent_kafka.schema_registry.avro import AvroSerializer
-from confluent_kafka.serialization import MessageField, SerializationContext
 
-from streamcart.config import get_settings
+from streamcart.avro_codec import encode_confluent, parse_schema
+from streamcart.config import TOPICS, get_settings
 from streamcart.logging import log
 
-SCHEMA_DIR = Path(__file__).resolve().parents[2] / "schemas" / "avro"
 
-KIND_SCHEMA = {
-    "orders": SCHEMA_DIR / "order.avsc",
-    "payments": SCHEMA_DIR / "payment.avsc",
-    "inventory": SCHEMA_DIR / "inventory.avsc",
-    "clickstream": SCHEMA_DIR / "clickstream.avsc",
-}
+@dataclass(frozen=True)
+class AvroEncoder:
+    schema: dict
+    schema_id: int
+
+    def encode(self, record: dict) -> bytes:
+        return encode_confluent(record, self.schema, self.schema_id)
 
 
-def build_producer() -> tuple[Producer, dict[str, AvroSerializer]]:
+def _fetch_encoder(registry_url: str, subject: str) -> AvroEncoder:
+    resp = requests.get(f"{registry_url}/subjects/{subject}/versions/latest", timeout=15)
+    resp.raise_for_status()
+    body = resp.json()
+    return AvroEncoder(
+        schema=parse_schema(json.loads(body["schema"])),
+        schema_id=int(body["id"]),
+    )
+
+
+def build_producer() -> tuple[Producer, dict[str, AvroEncoder]]:
     settings = get_settings()
-    registry = SchemaRegistryClient({"url": settings.schema_registry_url})
-    serializers = {
-        kind: AvroSerializer(
-            registry,
-            path.read_text(encoding="utf-8"),
-            conf={"auto.register.schemas": False},
-        )
-        for kind, path in KIND_SCHEMA.items()
+    registry_url = settings.schema_registry_url.rstrip("/")
+    encoders = {
+        kind: _fetch_encoder(registry_url, f"{topic}-value") for kind, topic in TOPICS.items()
     }
     producer = Producer(
         {
@@ -42,14 +47,15 @@ def build_producer() -> tuple[Producer, dict[str, AvroSerializer]]:
             "client.id": "streamcart-generator",
         }
     )
-    return producer, serializers
+    log("info", "producer_ready", schema_ids={k: v.schema_id for k, v in encoders.items()})
+    return producer, encoders
 
 
-def produce_event(producer: Producer, serializers: dict[str, AvroSerializer], event: dict) -> None:
+def produce_event(producer: Producer, encoders: dict[str, AvroEncoder], event: dict) -> None:
     kind = event["kind"]
     topic = event["topic"]
     record = event["record"]
-    payload = serializers[kind](record, SerializationContext(topic, MessageField.VALUE))
+    payload = encoders[kind].encode(record)
 
     def on_delivery(err, msg):
         if err:

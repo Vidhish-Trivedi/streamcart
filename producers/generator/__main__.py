@@ -15,14 +15,14 @@ def main() -> None:
     seed = int(os.getenv("GENERATOR_SEED", "42"))
     chaos = env_chaos()
     rng = random.Random(seed)
-    producer, serializers = build_producer()
+    producer, encoders = build_producer()
     interval = 1.0 / max(rate, 0.1)
     log("info", "generator_start", rate=rate, chaos=chaos, seed=seed)
 
     try:
         while True:
             for event in next_batch(rng, chaos):
-                produce_event(producer, serializers, event)
+                produce_event(producer, encoders, event)
             if chaos and rng.random() < 0.02:
                 produce_poison(producer, TOPICS["orders"])
             producer.poll(0)

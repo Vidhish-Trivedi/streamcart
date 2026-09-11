@@ -36,7 +36,7 @@ def set_compatibility(url: str, subject: str, level: str = "BACKWARD") -> None:
         timeout=15,
     )
     resp.raise_for_status()
-    log("info", "compatibility_set", subject=subject, level=level)
+    log("info", "compatibility_set", subject=subject, compatibility=level)
 
 
 def main() -> None:

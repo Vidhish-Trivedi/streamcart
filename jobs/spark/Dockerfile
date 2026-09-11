@@ -23,8 +23,9 @@ WORKDIR /opt/app
 COPY streamcart /opt/app/streamcart
 COPY schemas /opt/app/schemas
 COPY jobs/spark /opt/app/jobs
+COPY jobs/spark/entrypoint.sh /opt/entrypoint.sh
 ENV PYTHONPATH=/opt/app
 ENV PYTHONUNBUFFERED=1
 WORKDIR /opt/app/jobs
-RUN chmod +x entrypoint.sh
-ENTRYPOINT ["bash", "/opt/app/jobs/entrypoint.sh"]
+RUN sed -i 's/\r$//' /opt/entrypoint.sh && chmod +x /opt/entrypoint.sh
+ENTRYPOINT ["bash", "/opt/entrypoint.sh"]

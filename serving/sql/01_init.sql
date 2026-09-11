@@ -1,8 +1,4 @@
--- Serving + Airflow metadata. Idempotent gold tables use natural/event keys.
-
-CREATE DATABASE airflow;
-
-\c streamcart
+-- Serving-layer DDL. Idempotent gold tables use natural/event keys.
 
 CREATE TABLE IF NOT EXISTS fact_orders (
     event_id        UUID PRIMARY KEY,

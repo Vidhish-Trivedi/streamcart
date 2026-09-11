@@ -6,7 +6,7 @@ makes the serving layer idempotent on event_id / hour bucket.
 
 from __future__ import annotations
 
-from datetime import UTC, datetime
+from datetime import datetime, timezone
 
 import psycopg2
 from psycopg2.extras import execute_values
@@ -46,7 +46,7 @@ def upsert_gold(orders: list[dict], payments: list[dict], inventory: list[dict],
     gmv = hourly_gmv(fact)
     pay_stats = payment_failure_stats(payments)
     outs = stockouts(inventory)
-    now = datetime.now(UTC)
+    now = datetime.now(timezone.utc)
 
     with _conn() as conn:
         with conn.cursor() as cur:

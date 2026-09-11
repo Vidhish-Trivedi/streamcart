@@ -12,7 +12,7 @@ help:
 	@echo "make down           Stop the stack"
 
 up:
-	$(COMPOSE) up -d kafka schema-registry kafka-ui minio minio-init postgres kafka-init prometheus grafana kafka-exporter airflow
+	$(COMPOSE) up -d kafka schema-registry kafka-ui minio minio-init postgres kafka-init prometheus grafana kafka-exporter airflow-init airflow
 	$(COMPOSE) ps
 
 down:
